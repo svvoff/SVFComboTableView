@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SVFComboTableView.h"
 
-@interface ViewController : UITableViewController
+@interface ViewController : UIViewController
 
+@property (weak) IBOutlet SVFComboTableView * comboTableView;
 
 @end
 
