@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>5D5D8650-F858-435F-B534-20D1D2CE83F1</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>SVFComboTableViewDemo</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>6749C74C3BE8B941673F437C3C4F4AAA97386835</key>
 		<string>https://github.com/svvoff/SVFComboTableView.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>SVFComboTableViewDemo.xcodeproj/project.xcworkspace</string>
+	<string>SVFComboTableViewDemo.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>6749C74C3BE8B941673F437C3C4F4AAA97386835</key>
@@ -34,7 +34,7 @@
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>6749C74C3BE8B941673F437C3C4F4AAA97386835</string>
 			<key>IDESourceControlWCCName</key>
-			<string>SVFComboTableView</string>
+			<string>SVFComboTableViewDemo</string>
 		</dict>
 	</array>
 </dict>

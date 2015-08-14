@@ -52,6 +52,7 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 - (void) configureSourceData {
     ___sectionsCvArray = [NSMutableArray new];
     ___contentOffsetPoint = CGPointZero;
+    self.comboTableViewSelectionType = SVFComboTableViewNonSelection;
 }
 
 #pragma mark - TableViewDataSource
@@ -292,6 +293,33 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
     return section;
 }
 
+#pragma mark - CollectionViewDelegate
+
+- (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSIndexPath * index = [self indexPathForCollectionView:collectionView];
+    SVFCTIndexPath * ctIndexPath = [self ctIndexPathForTableIndexPath:index andCollectionIndexPath:indexPath collectionView:collectionView];
+    switch (self.comboTableViewSelectionType) {
+        case SVFComboTableViewNonSelection: {
+            
+        }
+            break;
+        case SVFComboTableViewItemSelection: {
+            
+        }
+            break;
+        case SVFComboTableViewRowSelection: {
+            [___tableView selectRowAtIndexPath:index animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [___tableView deselectRowAtIndexPath:index animated:YES];
+        }
+            break;
+        default:
+            break;
+    }
+    if ([self.delegate respondsToSelector:@selector(cTableView:didSelectItemForIndexPath:)]) {
+        [self.delegate cTableView:self didSelectItemForIndexPath:ctIndexPath];
+    }
+}
+
 #pragma mark - CollectionViewDelegateFlowLayout
 
 - (CGSize) collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -378,7 +406,21 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
     }
 }
 
+#pragma mark - Properties
 
+#pragma mark - Other
+
+- (void) reloadData {
+    [___tableView reloadData];
+}
+
+- (void) addSubview:(UIView *)view {
+    if ([view isKindOfClass:[UIRefreshControl class]]) {
+        [___tableView addSubview:view];
+    } else {
+        [super addSubview:view];
+    }
+}
 
 /*
 // Only override drawRect: if you perform custom drawing.

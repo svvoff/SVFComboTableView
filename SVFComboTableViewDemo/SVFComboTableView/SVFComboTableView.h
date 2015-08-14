@@ -12,10 +12,20 @@
 #import <UIKit/UIKit.h>
 #import "SVFCTIndexPath.h"
 
+typedef enum _SVFComboTableViewSelectionType {
+    SVFComboTableViewRowSelection,
+    SVFComboTableViewItemSelection,
+    SVFComboTableViewNonSelection
+} SVFComboTableViewSelectionType;
+
 @interface SVFComboTableView : UIView
 
 @property IBOutlet id <SVFComboTableViewDataSource> dataSource;
 @property IBOutlet id <SVFComboTableViewDelegate> delegate;
+
+@property (nonatomic) NSInteger comboTableViewSelectionType;
+
+- (void) reloadData;
 
 @end
 
@@ -43,5 +53,6 @@
 @optional
 - (UIView *) cTableView:(SVFComboTableView *) cTableView viewForHeaderInSection:(NSInteger) section;
 - (CGFloat) cTableView:(SVFComboTableView *) cTableView heightForHeaderInSection:(NSInteger) section;
+- (void) cTableView:(SVFComboTableView *) cTabelView didSelectItemForIndexPath:(SVFCTIndexPath *) indexPath;
 
 @end
