@@ -12,14 +12,14 @@
 
 @end
 
-static NSString * tableViewCellId = @"tableViewCellId";
-static NSString * collectionViewCellId = @"collectionViewCellId";
+static NSString * const tableViewCellId = @"tableViewCellId";
+static NSString * const collectionViewCellId = @"collectionViewCellId";
 
 @implementation SVFComboTableView {
-    NSMutableArray * ___sectionsCvArray;
+    NSMutableArray * _sectionsCvArray;
     UICollectionView * ____firstScrolled; // collection view witch reacting on touch
     CGPoint ___contentOffsetPoint;
-    UITableView * ___tableView;
+    UITableView * _tableView;
 }
 
 - (instancetype) initWithFrame:(CGRect)frame {
@@ -37,20 +37,20 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 }
 
 - (void) createTableViewWithFrame:(CGRect) frame {
-    ___tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
-    ___tableView.dataSource = self;
-    ___tableView.delegate = self;
-    ___tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    [self addSubview:___tableView];
+    _tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
+    _tableView.dataSource = self;
+    _tableView.delegate = self;
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [self addSubview:_tableView];
     [self configureTableView];
 }
 
 - (void) configureTableView {
-    [___tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tableViewCellId];
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tableViewCellId];
 }
 
 - (void) configureSourceData {
-    ___sectionsCvArray = [NSMutableArray new];
+    _sectionsCvArray = [NSMutableArray new];
     ___contentOffsetPoint = CGPointZero;
     self.comboTableViewSelectionType = SVFComboTableViewNonSelection;
 }
@@ -75,6 +75,12 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 
 - (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:tableViewCellId forIndexPath:indexPath];
+    
+    if ([self.delegate respondsToSelector:@selector(cTableView:colorForTableViewCellForIndexPath:)]) {
+        SVFCTIndexPath * index = [SVFCTIndexPath indexPathForRow:indexPath.row column:0 inSection:indexPath.section];
+        UIColor * cellColor = [self.delegate cTableView:self colorForTableViewCellForIndexPath:index];
+        cell.backgroundColor = cellColor;
+    }
     
     [self configureCollectionViewForTargetView:cell forSection:indexPath.section];
     
@@ -116,6 +122,13 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
     }
 }
 
+- (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(cTableView:commitEditingStyle:forRow:inSection:)]) {
+        [self.delegate cTableView:self commitEditingStyle:editingStyle forRow:indexPath.row inSection:indexPath.section];
+    }
+}
+
+
 #pragma mark - Configure
 
 - (void) configureCollectionViewForTargetView:(UIView *) targetView forSection:(NSInteger) section {
@@ -123,8 +136,8 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
     UICollectionView * cv = [self configureCollectionViewWithFrame:frameForCV];
     
     NSMutableArray * cvSectionArray = nil;
-    if (section < ___sectionsCvArray.count) {
-        cvSectionArray = [___sectionsCvArray[section] mutableCopy];
+    if (section < _sectionsCvArray.count) {
+        cvSectionArray = [_sectionsCvArray[section] mutableCopy];
     } else {
         cvSectionArray = [NSMutableArray new];
     }
@@ -140,10 +153,10 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
     }
     
     [cvSectionArray addObject:cv];
-    if (___sectionsCvArray.count == section) {
-        [___sectionsCvArray insertObject:cvSectionArray atIndex:section];
+    if (_sectionsCvArray.count == section) {
+        [_sectionsCvArray insertObject:cvSectionArray atIndex:section];
     } else {
-        [___sectionsCvArray replaceObjectAtIndex:section withObject:cvSectionArray];
+        [_sectionsCvArray replaceObjectAtIndex:section withObject:cvSectionArray];
     }
     //
     [targetView addSubview:cv];
@@ -245,7 +258,7 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 
 - (NSIndexPath *) indexPathForTableViewCell:(UITableViewCell *) tableViewCell {
     if ([tableViewCell isKindOfClass:[UITableViewCell class]]) {
-        NSIndexPath * index = [___tableView indexPathForCell:tableViewCell];
+        NSIndexPath * index = [_tableView indexPathForCell:tableViewCell];
         return index;
     } else {
         return nil;
@@ -277,8 +290,8 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 - (NSInteger) sectionNumberForCollectionView:(UICollectionView *) collectionView {
     NSInteger section = - 1;
     
-    for (int i = 0; i < ___sectionsCvArray.count; ++i) {
-        NSArray * sectionArray = ___sectionsCvArray[i];
+    for (int i = 0; i < _sectionsCvArray.count; ++i) {
+        NSArray * sectionArray = _sectionsCvArray[i];
         for (int j = 0; j < sectionArray.count; ++j) {
             UICollectionView * cv = sectionArray[j];
             if ([cv isEqual:collectionView]) {
@@ -308,15 +321,18 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
         }
             break;
         case SVFComboTableViewRowSelection: {
-            [___tableView selectRowAtIndexPath:index animated:NO scrollPosition:UITableViewScrollPositionNone];
-            [___tableView deselectRowAtIndexPath:index animated:YES];
+            [_tableView selectRowAtIndexPath:index animated:NO scrollPosition:UITableViewScrollPositionNone];
+            [_tableView deselectRowAtIndexPath:index animated:YES];
         }
             break;
         default:
             break;
     }
-    if ([self.delegate respondsToSelector:@selector(cTableView:didSelectItemForIndexPath:)]) {
+    if ([self.delegate respondsToSelector:@selector(cTableView:didSelectItemForIndexPath:)] && ctIndexPath.row >= 0) {
         [self.delegate cTableView:self didSelectItemForIndexPath:ctIndexPath];
+    }
+    if ([self.delegate respondsToSelector:@selector(cTableView:didSelectHeaderItemForColumn:inSection:)] && ctIndexPath.row == -1) {
+        [self.delegate cTableView:self didSelectHeaderItemForColumn:ctIndexPath.column inSection:ctIndexPath.section];
     }
 }
 
@@ -376,7 +392,7 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 - (NSArray *) getArrayForSelectedCollectionView:(UICollectionView *) selectedCV {
     NSArray * selectedSection = nil;
     
-    for (NSArray * section in ___sectionsCvArray) {
+    for (NSArray * section in _sectionsCvArray) {
         for (UICollectionView * scrolledCV in section) {
             if ([scrolledCV isEqual:____firstScrolled]) {
                 selectedSection = section;
@@ -411,15 +427,24 @@ static NSString * collectionViewCellId = @"collectionViewCellId";
 #pragma mark - Other
 
 - (void) reloadData {
-    [___tableView reloadData];
+    [_tableView reloadData];
 }
 
 - (void) addSubview:(UIView *)view {
     if ([view isKindOfClass:[UIRefreshControl class]]) {
-        [___tableView addSubview:view];
+        [_tableView addSubview:view];
     } else {
         [super addSubview:view];
     }
+}
+
+- (void) setEditing:(BOOL) editing animated:(BOOL) animated {
+    [_tableView setEditing:editing animated:animated];
+}
+
+- (void) deleteRow:(NSInteger)row inSection:(NSInteger)section withRowAnimation:(UITableViewRowAnimation)rowAnimation{
+    NSIndexPath * indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+    [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:rowAnimation];
 }
 
 /*

@@ -20,12 +20,15 @@ typedef enum _SVFComboTableViewSelectionType {
 
 @interface SVFComboTableView : UIView
 
-@property IBOutlet id <SVFComboTableViewDataSource> dataSource;
-@property IBOutlet id <SVFComboTableViewDelegate> delegate;
+@property (weak, nonatomic) IBOutlet id <SVFComboTableViewDataSource> dataSource;
+@property (weak, nonatomic) IBOutlet id <SVFComboTableViewDelegate> delegate;
 
 @property (nonatomic) NSInteger comboTableViewSelectionType;
 
 - (void) reloadData;
+
+- (void) setEditing:(BOOL) editing animated:(BOOL) animated;
+- (void) deleteRow:(NSInteger) row inSection:(NSInteger) section withRowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 @end
 
@@ -54,5 +57,12 @@ typedef enum _SVFComboTableViewSelectionType {
 - (UIView *) cTableView:(SVFComboTableView *) cTableView viewForHeaderInSection:(NSInteger) section;
 - (CGFloat) cTableView:(SVFComboTableView *) cTableView heightForHeaderInSection:(NSInteger) section;
 - (void) cTableView:(SVFComboTableView *) cTabelView didSelectItemForIndexPath:(SVFCTIndexPath *) indexPath;
+- (void) cTableView:(SVFComboTableView *) cTabelView didSelectHeaderItemForColumn:(NSInteger) column inSection:(NSInteger) section;
+- (void) cTableView:(SVFComboTableView *) cTabelView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRow:(NSInteger) row inSection:(NSInteger) section;
+
+/*!
+    indexPath.colum always equal 0
+*/
+- (UIColor *) cTableView:(SVFComboTableView *) cTabelView colorForTableViewCellForIndexPath:(SVFCTIndexPath *) indexPath;
 
 @end
