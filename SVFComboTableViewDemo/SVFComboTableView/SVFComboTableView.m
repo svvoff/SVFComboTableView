@@ -128,6 +128,16 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
     }
 }
 
+- (BOOL) tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self.delegate respondsToSelector:@selector(cTableView:canEditRow:inSection:)]) {
+        return [self.delegate cTableView:self canEditRow:indexPath.row inSection:indexPath.section];
+    } else if ([self.delegate respondsToSelector:@selector(cTableView:commitEditingStyle:forRow:inSection:)]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 
 #pragma mark - Configure
 

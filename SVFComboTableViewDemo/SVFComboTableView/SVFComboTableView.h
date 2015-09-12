@@ -59,6 +59,7 @@ typedef enum _SVFComboTableViewSelectionType {
 - (void) cTableView:(SVFComboTableView *) cTabelView didSelectItemForIndexPath:(SVFCTIndexPath *) indexPath;
 - (void) cTableView:(SVFComboTableView *) cTabelView didSelectHeaderItemForColumn:(NSInteger) column inSection:(NSInteger) section;
 - (void) cTableView:(SVFComboTableView *) cTabelView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRow:(NSInteger) row inSection:(NSInteger) section;
+- (BOOL) cTableView:(SVFComboTableView *) cTableView canEditRow:(NSInteger) row inSection:(NSInteger) section;
 
 /*!
     indexPath.colum always equal 0
