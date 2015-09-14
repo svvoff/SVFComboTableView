@@ -14,11 +14,12 @@
 
 static NSString * const tableViewCellId = @"tableViewCellId";
 static NSString * const collectionViewCellId = @"collectionViewCellId";
+static NSString * kTableViewContentViewCellClassString = nil; //collection view table cell content view
 
 @implementation SVFComboTableView {
     NSMutableArray * _sectionsCvArray;
-    UICollectionView * ____firstScrolled; // collection view witch reacting on touch
-    CGPoint ___contentOffsetPoint;
+    UICollectionView * _firstScrolled; // collection view witch reacting on touch
+    CGPoint _contentOffsetPoint;
     UITableView * _tableView;
 }
 
@@ -50,8 +51,11 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
 }
 
 - (void) configureSourceData {
+    UITableViewCell * cell = [UITableViewCell new];
+    kTableViewContentViewCellClassString = NSStringFromClass(cell.contentView.class);
+    cell = nil;
     _sectionsCvArray = [NSMutableArray new];
-    ___contentOffsetPoint = CGPointZero;
+    _contentOffsetPoint = CGPointZero;
     self.comboTableViewSelectionType = SVFComboTableViewNonSelection;
 }
 
@@ -81,8 +85,7 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
         UIColor * cellColor = [self.delegate cTableView:self colorForTableViewCellForIndexPath:index];
         cell.backgroundColor = cellColor;
     }
-    
-    [self configureCollectionViewForTargetView:cell forSection:indexPath.section];
+    [self configureCollectionViewForTargetView:cell.contentView forSection:indexPath.section];
     
     return cell;
 }
@@ -182,7 +185,7 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
     collectionView.dataSource = self;
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.decelerationRate = UIScrollViewDecelerationRateFast;
-    [collectionView setContentOffset:___contentOffsetPoint animated:YES];
+    [collectionView setContentOffset:_contentOffsetPoint animated:YES];
     collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     return collectionView;
 }
@@ -209,33 +212,12 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     UICollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionViewCellId forIndexPath:indexPath];
     
-    /*if ([collectionView.superview isEqual:sectionHeaderView]) {
-        [self clearSubviewsForView:cell forClass:[UIView class]];
-        [self clearSubviewsForView:cell forClass:[UIImageView class]];
-        NSString * title = dataDict[@"titles"][indexPath.row];
-        NSString * alignStr = dataDict[@"aligns"][indexPath.row];
-        NSTextAlignment align = NSTextAlignmentLeft;
-        if (![alignStr isEqualToString:@"left"]) {
-            align = NSTextAlignmentRight;
-        }
-        [self addLabelToView:cell withText:title isTitle:YES align:align];
-    }*/
     
-    UITableViewCell * tableCell = (UITableViewCell *) collectionView.superview;
-    NSIndexPath * index = [self indexPathForTableViewCell:tableCell];
+    
+    UIView * tableContentView = collectionView.superview;
+    NSIndexPath * index = [self indexPathForTableViewCell:tableContentView];
     CGRect cellFrame = cell.bounds;
 
-    
-    //UIView * header = [___tableView headerViewForSection:index.section];
-    
-    /*if (!index) {
-        //NSLog(@"%@", tableCell.subviews);
-        cell.backgroundColor = [UIColor redColor];
-        if (indexPath.row % 2 == 0) {
-            cell.backgroundColor = [UIColor blueColor];
-        }
-    }*/
-    
     if (!index && [self.dataSource respondsToSelector:@selector(cTableView:viewForItemInHeaderViewForIndexPath:withCellFrame:)]) {
         NSInteger sectionNumber = [self sectionNumberForCollectionView:collectionView];
         SVFCTIndexPath * ctIndexPath = [SVFCTIndexPath indexPathForRow: - 1 column:indexPath.row inSection:sectionNumber];
@@ -246,7 +228,7 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
         }
     }
     
-    if ([collectionView.superview isKindOfClass:[UITableViewCell  class]]) {
+    if ([NSStringFromClass(collectionView.superview.class) isEqualToString:kTableViewContentViewCellClassString]/* [collectionView.superview isKindOfClass:_tableViewContentViewCellClass]*/) {
         [self clearSubviewsForView:cell forClass:[UIView class]];
         
         if (index) {
@@ -257,18 +239,19 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
                 [cell addSubview:viewInCell];
             }
         }
-    }    
+    }
+    
     return cell;
 }
 
 - (NSIndexPath *) indexPathForCollectionView:(UICollectionView *) collectionView {
-    UITableViewCell * tableCell = (UITableViewCell *) collectionView.superview;
+    UIView * tableCell = collectionView.superview;
     return [self indexPathForTableViewCell:tableCell];
 }
 
-- (NSIndexPath *) indexPathForTableViewCell:(UITableViewCell *) tableViewCell {
-    if ([tableViewCell isKindOfClass:[UITableViewCell class]]) {
-        NSIndexPath * index = [_tableView indexPathForCell:tableViewCell];
+- (NSIndexPath *) indexPathForTableViewCell:(UIView *) tableCellContentView {
+    if ([tableCellContentView.superview isKindOfClass:[UITableViewCell class]]) {
+        NSIndexPath * index = [_tableView indexPathForCell: (UITableViewCell *)tableCellContentView.superview];
         return index;
     } else {
         return nil;
@@ -363,38 +346,35 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
 #pragma mark - ScrollViewDelegate
 
 - (void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    ____firstScrolled = nil;
-    //NSLog(@"scrollViewDidEndDecelerating");
-    
+    _firstScrolled = nil;
 }
 
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if (!____firstScrolled) {
-        ____firstScrolled = (UICollectionView *) scrollView;
+    if (!_firstScrolled) {
+        _firstScrolled = (UICollectionView *) scrollView;
     }
-    //NSLog(@"viewWillBeginDragging");
 }
 
 - (void) scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    ____firstScrolled = nil;
+    _firstScrolled = nil;
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isKindOfClass:[UICollectionView class]]) {
-        if (!____firstScrolled) {
-            ____firstScrolled = (UICollectionView *) scrollView;
+        if (!_firstScrolled) {
+            _firstScrolled = (UICollectionView *) scrollView;
         }
         
-        NSArray * selectedSection = [self getArrayForSelectedCollectionView:____firstScrolled];
+        NSArray * selectedSection = [self getArrayForSelectedCollectionView:_firstScrolled];
         
-        if ([scrollView isEqual:____firstScrolled]) {
+        if ([scrollView isEqual:_firstScrolled]) {
             for (UICollectionView * item in selectedSection) {
-                if (![item isEqual:____firstScrolled]) {
-                    ___contentOffsetPoint = scrollView.contentOffset;
-                    [item setContentOffset:___contentOffsetPoint animated:NO];
+                if (![item isEqual:_firstScrolled]) {
+                    _contentOffsetPoint = scrollView.contentOffset;
+                    [item setContentOffset:_contentOffsetPoint animated:NO];
                 }
             }
-            ____firstScrolled = nil;
+            _firstScrolled = nil;
         }
     }
 }
@@ -404,7 +384,7 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
     
     for (NSArray * section in _sectionsCvArray) {
         for (UICollectionView * scrolledCV in section) {
-            if ([scrolledCV isEqual:____firstScrolled]) {
+            if ([scrolledCV isEqual:_firstScrolled]) {
                 selectedSection = section;
                 break;
             }
@@ -419,14 +399,14 @@ static NSString * const collectionViewCellId = @"collectionViewCellId";
 
 - (void) setContentOffsetForScrollView:(UIScrollView *) scrollView {
     
-    NSArray * arrayWithCV = [self getArrayForSelectedCollectionView:____firstScrolled];
+    NSArray * arrayWithCV = [self getArrayForSelectedCollectionView:_firstScrolled];
     
     if ([scrollView isKindOfClass:[UICollectionView class]]) {
         
         for (UICollectionView * item in arrayWithCV) {
             if (![item isEqual:scrollView]) {
                 [item setContentOffset:scrollView.contentOffset animated:NO];
-                ___contentOffsetPoint = scrollView.contentOffset;
+                _contentOffsetPoint = scrollView.contentOffset;
             }
         }
     }
