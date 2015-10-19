@@ -42,6 +42,11 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     _tableView.dataSource = self;
     _tableView.delegate = self;
     _tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+    if([_tableView respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)]) {
+        _tableView.cellLayoutMarginsFollowReadableWidth = NO;
+    }
+    
     [self addSubview:_tableView];
     [self configureTableView];
 }
@@ -187,6 +192,10 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     collectionView.decelerationRate = UIScrollViewDecelerationRateFast;
     [collectionView setContentOffset:_contentOffsetPoint animated:YES];
     collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    //    UITapGestureRecognizer * gr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(collectionViewDidTaped:)];
+    //    [collectionView addGestureRecognizer:gr];
+    
     return collectionView;
 }
 
@@ -217,7 +226,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     UIView * tableContentView = collectionView.superview;
     NSIndexPath * index = [self indexPathForTableViewCell:tableContentView];
     CGRect cellFrame = cell.bounds;
-
+    
     if (!index && [self.dataSource respondsToSelector:@selector(cTableView:viewForItemInHeaderViewForIndexPath:withCellFrame:)]) {
         NSInteger sectionNumber = [self sectionNumberForCollectionView:collectionView];
         SVFCTIndexPath * ctIndexPath = [SVFCTIndexPath indexPathForRow: - 1 column:indexPath.row inSection:sectionNumber];
@@ -343,6 +352,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     return CGSizeMake(w, h);
 }
 
+
 #pragma mark - ScrollViewDelegate
 
 - (void) scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -412,7 +422,9 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     }
 }
 
+
 #pragma mark - Properties
+
 
 #pragma mark - Other
 
@@ -438,11 +450,11 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect {
+ // Drawing code
+ }
+ */
 
 @end
