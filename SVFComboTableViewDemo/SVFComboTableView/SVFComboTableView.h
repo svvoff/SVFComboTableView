@@ -1,29 +1,30 @@
 //
 //  ComboTableView.h
-//  bachmann crm mobile app bps2
+//  SVFComboTableViewDemo
 //
-//  Created by Andrey on 03/07/15.
-//  Copyright (c) 2015 Kirill Pyulzyu. All rights reserved.
+//  Created by Andrei Sorokin on 03/07/15.
+//  Copyright © 2016 _SVF_. All rights reserved.
 //
 
 @protocol SVFComboTableViewDelegate;
 @protocol SVFComboTableViewDataSource;
 
-#import <UIKit/UIKit.h>
+#import <UIKit/UIView.h>
 #import "SVFCTIndexPath.h"
+#import <UIKit/UITableView.h>
 
-typedef enum _SVFComboTableViewSelectionType {
-    SVFComboTableViewRowSelection,
-    SVFComboTableViewItemSelection,
-    SVFComboTableViewNonSelection
-} SVFComboTableViewSelectionType;
+typedef NS_ENUM(NSUInteger, SVFComboTableViewSelectionType) {
+  SVFComboTableViewRowSelection,
+  SVFComboTableViewItemSelection,
+  SVFComboTableViewNonSelection
+};
 
 @interface SVFComboTableView : UIView
 
 @property (weak, nonatomic) IBOutlet id <SVFComboTableViewDataSource> dataSource;
 @property (weak, nonatomic) IBOutlet id <SVFComboTableViewDelegate> delegate;
 
-@property (nonatomic) NSInteger comboTableViewSelectionType;
+@property (nonatomic, assign) SVFComboTableViewSelectionType selectionType;
 
 - (void) reloadData;
 
@@ -31,6 +32,7 @@ typedef enum _SVFComboTableViewSelectionType {
 - (void) deleteRow:(NSInteger) row inSection:(NSInteger) section withRowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 @end
+
 
 #pragma mark - DataSource
 
@@ -48,6 +50,7 @@ typedef enum _SVFComboTableViewSelectionType {
 - (CGFloat) cTableView:(SVFComboTableView *) cTableView widthForColumnAtIndexPath:(SVFCTIndexPath *) indexPath;
 
 @end
+
 
 #pragma mark - Delegate
 

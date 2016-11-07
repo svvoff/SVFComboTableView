@@ -1,26 +1,34 @@
 //
 //  ComboTableView.m
-//  bachmann crm mobile app bps2
+//  SVFComboTableViewDemo
 //
-//  Created by Andrey on 03/07/15.
-//  Copyright (c) 2015 Kirill Pyulzyu. All rights reserved.
+//  Created by Andrei Sorokin on 03/07/15.
+//  Copyright © 2016 _SVF_. All rights reserved.
 //
 
 #import "SVFComboTableView.h"
+#import <UIKit/UICollectionView.h>
+#import <UIKit/UICollectionViewFlowLayout.h>
+#import <UIKit/UICollectionViewCell.h>
 
-@interface SVFComboTableView () <UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate>
-
-@end
 
 static NSString * const tableViewCellId = @"tableViewCellId";
 static NSString * const collectionViewCellId = @"collectionViewCellId";
 static NSString * kTableViewContentViewCellClassString = nil; //collection view table cell content view
 
+@interface SVFComboTableView () <UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource,
+                                  UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate>
+
+
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) UICollectionView *firstScrolled; // collection view witch reacting on touch
+@property (nonatomic, strong) NSMutableArray *sectionsCvArray;
+@property (nonatomic, assign) CGPoint contentOffsetPoint;
+
+@end
+
 @implementation SVFComboTableView {
-    NSMutableArray * _sectionsCvArray;
-    UICollectionView * _firstScrolled; // collection view witch reacting on touch
-    CGPoint _contentOffsetPoint;
-    UITableView * _tableView;
+  
 }
 
 - (instancetype) initWithFrame:(CGRect)frame {
@@ -61,8 +69,9 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     cell = nil;
     _sectionsCvArray = [NSMutableArray new];
     _contentOffsetPoint = CGPointZero;
-    self.comboTableViewSelectionType = SVFComboTableViewNonSelection;
+    self.selectionType = SVFComboTableViewNonSelection;
 }
+
 
 #pragma mark - TableViewDataSource
 
@@ -193,9 +202,6 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     [collectionView setContentOffset:_contentOffsetPoint animated:YES];
     collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    //    UITapGestureRecognizer * gr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(collectionViewDidTaped:)];
-    //    [collectionView addGestureRecognizer:gr];
-    
     return collectionView;
 }
 
@@ -313,7 +319,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 - (void) collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSIndexPath * index = [self indexPathForCollectionView:collectionView];
     SVFCTIndexPath * ctIndexPath = [self ctIndexPathForTableIndexPath:index andCollectionIndexPath:indexPath collectionView:collectionView];
-    switch (self.comboTableViewSelectionType) {
+    switch (self.selectionType) {
         case SVFComboTableViewNonSelection: {
             
         }
@@ -449,12 +455,5 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     [_tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:rowAnimation];
 }
 
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect {
- // Drawing code
- }
- */
 
 @end

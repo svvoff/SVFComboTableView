@@ -1,9 +1,9 @@
 //
-//  CTIndexPath.m
-//  bachmann crm mobile app bps2
+//  SVFCTIndexPath.m
+//  SVFComboTableViewDemo
 //
-//  Created by Andrey on 03/07/15.
-//  Copyright (c) 2015 Kirill Pyulzyu. All rights reserved.
+//  Created by Andrei Sorokin on 03/07/15.
+//  Copyright © 2016 _SVF_. All rights reserved.
 //
 
 #import "SVFCTIndexPath.h"
