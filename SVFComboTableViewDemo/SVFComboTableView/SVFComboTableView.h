@@ -7,11 +7,12 @@
 //
 
 @protocol SVFComboTableViewDelegate;
-@protocol SVFComboTableViewDataSource;
+
 
 #import <UIKit/UIView.h>
 #import "SVFCTIndexPath.h"
 #import <UIKit/UITableView.h>
+#import "SVFComboTableViewDataSource.h"
 
 typedef NS_ENUM(NSUInteger, SVFComboTableViewSelectionType) {
   SVFComboTableViewRowSelection,
@@ -35,21 +36,6 @@ typedef NS_ENUM(NSUInteger, SVFComboTableViewSelectionType) {
 
 
 #pragma mark - DataSource
-
-@protocol SVFComboTableViewDataSource <NSObject>
-
-@required
-- (NSInteger) numberOfSectionsForComboTableView:(SVFComboTableView *) cTableView;
-- (NSInteger) cTableView:(SVFComboTableView *) cTableView numberOfRowsInSection:(NSInteger) section;
-- (NSInteger) cTableView:(SVFComboTableView *) cTableView numberOfColumnsInSection:(NSInteger) section;
-- (UIView *) cTableView:(SVFComboTableView *) cTableView viewForItemAtIndexPath:(SVFCTIndexPath *) indexPath withCellFrame:(CGRect) cellFrame;
-- (UIView *) cTableView:(SVFComboTableView *) cTabelView viewForItemInHeaderViewForIndexPath:(SVFCTIndexPath *) indexPath withCellFrame:(CGRect) cellFrame;
-
-@optional
-- (CGFloat) cTableView:(SVFComboTableView *) cTableView heightForRow:(NSInteger) row inSection:(NSInteger) section;
-- (CGFloat) cTableView:(SVFComboTableView *) cTableView widthForColumnAtIndexPath:(SVFCTIndexPath *) indexPath;
-
-@end
 
 
 #pragma mark - Delegate

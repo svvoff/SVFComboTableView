@@ -16,6 +16,10 @@
 		558B1BF41B7A572900A0A82B /* SVFComboTableViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 558B1BF31B7A572900A0A82B /* SVFComboTableViewDemoTests.m */; };
 		558B1C021B7A57AB00A0A82B /* SVFComboTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 558B1BFF1B7A57AB00A0A82B /* SVFComboTableView.m */; };
 		558B1C031B7A57AB00A0A82B /* SVFCTIndexPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 558B1C011B7A57AB00A0A82B /* SVFCTIndexPath.m */; };
+		B90CF2261E3E3A58004E6911 /* SVFTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B90CF2251E3E3A58004E6911 /* SVFTableViewDataSource.m */; };
+		B90CF22B1E3E4576004E6911 /* SVFComboTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B90CF2291E3E4576004E6911 /* SVFComboTableViewCell.m */; };
+		B90CF22C1E3E4576004E6911 /* SVFComboTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B90CF22A1E3E4576004E6911 /* SVFComboTableViewCell.xib */; };
+		B90CF22F1E3E4602004E6911 /* SVFComboTableViewConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = B90CF22E1E3E4602004E6911 /* SVFComboTableViewConstants.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +50,14 @@
 		558B1BFF1B7A57AB00A0A82B /* SVFComboTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVFComboTableView.m; sourceTree = "<group>"; };
 		558B1C001B7A57AB00A0A82B /* SVFCTIndexPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVFCTIndexPath.h; sourceTree = "<group>"; };
 		558B1C011B7A57AB00A0A82B /* SVFCTIndexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVFCTIndexPath.m; sourceTree = "<group>"; };
+		B90CF2241E3E3A58004E6911 /* SVFTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVFTableViewDataSource.h; sourceTree = "<group>"; };
+		B90CF2251E3E3A58004E6911 /* SVFTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVFTableViewDataSource.m; sourceTree = "<group>"; };
+		B90CF2271E3E3B8E004E6911 /* SVFComboTableViewDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVFComboTableViewDataSource.h; sourceTree = "<group>"; };
+		B90CF2281E3E4576004E6911 /* SVFComboTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVFComboTableViewCell.h; sourceTree = "<group>"; };
+		B90CF2291E3E4576004E6911 /* SVFComboTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVFComboTableViewCell.m; sourceTree = "<group>"; };
+		B90CF22A1E3E4576004E6911 /* SVFComboTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SVFComboTableViewCell.xib; sourceTree = "<group>"; };
+		B90CF22D1E3E4602004E6911 /* SVFComboTableViewConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVFComboTableViewConstants.h; sourceTree = "<group>"; };
+		B90CF22E1E3E4602004E6911 /* SVFComboTableViewConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVFComboTableViewConstants.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,12 +141,36 @@
 		558B1BFD1B7A57AB00A0A82B /* SVFComboTableView */ = {
 			isa = PBXGroup;
 			children = (
+				B90CF2231E3E3A3A004E6911 /* model */,
+				B90CF21F1E3E34AF004E6911 /* cells */,
 				558B1BFE1B7A57AB00A0A82B /* SVFComboTableView.h */,
 				558B1BFF1B7A57AB00A0A82B /* SVFComboTableView.m */,
 				558B1C001B7A57AB00A0A82B /* SVFCTIndexPath.h */,
 				558B1C011B7A57AB00A0A82B /* SVFCTIndexPath.m */,
+				B90CF2271E3E3B8E004E6911 /* SVFComboTableViewDataSource.h */,
+				B90CF22D1E3E4602004E6911 /* SVFComboTableViewConstants.h */,
+				B90CF22E1E3E4602004E6911 /* SVFComboTableViewConstants.m */,
 			);
 			path = SVFComboTableView;
+			sourceTree = "<group>";
+		};
+		B90CF21F1E3E34AF004E6911 /* cells */ = {
+			isa = PBXGroup;
+			children = (
+				B90CF2281E3E4576004E6911 /* SVFComboTableViewCell.h */,
+				B90CF2291E3E4576004E6911 /* SVFComboTableViewCell.m */,
+				B90CF22A1E3E4576004E6911 /* SVFComboTableViewCell.xib */,
+			);
+			path = cells;
+			sourceTree = "<group>";
+		};
+		B90CF2231E3E3A3A004E6911 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				B90CF2241E3E3A58004E6911 /* SVFTableViewDataSource.h */,
+				B90CF2251E3E3A58004E6911 /* SVFTableViewDataSource.m */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,6 +253,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B90CF22C1E3E4576004E6911 /* SVFComboTableViewCell.xib in Resources */,
 				558B1BE31B7A572900A0A82B /* Main.storyboard in Resources */,
 				558B1BE81B7A572900A0A82B /* LaunchScreen.xib in Resources */,
 				558B1BE51B7A572900A0A82B /* Images.xcassets in Resources */,
@@ -238,9 +275,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				558B1C031B7A57AB00A0A82B /* SVFCTIndexPath.m in Sources */,
+				B90CF2261E3E3A58004E6911 /* SVFTableViewDataSource.m in Sources */,
 				558B1C021B7A57AB00A0A82B /* SVFComboTableView.m in Sources */,
+				B90CF22B1E3E4576004E6911 /* SVFComboTableViewCell.m in Sources */,
 				558B1BE01B7A572900A0A82B /* ViewController.m in Sources */,
 				558B1BDD1B7A572900A0A82B /* AppDelegate.m in Sources */,
+				B90CF22F1E3E4602004E6911 /* SVFComboTableViewConstants.m in Sources */,
 				558B1BDA1B7A572900A0A82B /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

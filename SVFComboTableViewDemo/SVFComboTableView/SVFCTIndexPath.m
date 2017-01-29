@@ -11,11 +11,18 @@
 @implementation SVFCTIndexPath
 
 + (SVFCTIndexPath *) indexPathForRow:(NSInteger) row column:(NSInteger) column inSection:(NSInteger) section {
-    SVFCTIndexPath * returningIP = [[SVFCTIndexPath alloc] init];
-    returningIP->_section = section;
-    returningIP->_row = row;
-    returningIP->_column = column;
-    return returningIP;
+    return [[SVFCTIndexPath alloc] initWithRow:row column:column section:section];
+}
+
+- (instancetype) initWithRow:(NSInteger) row column:(NSInteger) column section:(NSInteger) section {
+    self = [super init];
+    if (self) {
+        _row = row;
+        _column = column;
+        _section = section;
+    }
+    
+    return self;
 }
 
 @end

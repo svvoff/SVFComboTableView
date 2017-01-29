@@ -10,13 +10,15 @@
 #import <UIKit/UICollectionView.h>
 #import <UIKit/UICollectionViewFlowLayout.h>
 #import <UIKit/UICollectionViewCell.h>
+#import "SVFComboTableViewCell.h"
+#import "SVFTableViewDataSource.h"
+#import "SVFComboTableViewConstants.h"
 
 
-static NSString * const tableViewCellId = @"tableViewCellId";
-static NSString * const collectionViewCellId = @"collectionViewCellId";
+
 static NSString * kTableViewContentViewCellClassString = nil; //collection view table cell content view
 
-@interface SVFComboTableView () <UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource,
+@interface SVFComboTableView () <UITableViewDelegate, UICollectionViewDataSource,
                                   UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate>
 
 
@@ -24,6 +26,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 @property (nonatomic, strong) UICollectionView *firstScrolled; // collection view witch reacting on touch
 @property (nonatomic, strong) NSMutableArray *sectionsCvArray;
 @property (nonatomic, assign) CGPoint contentOffsetPoint;
+@property (nonatomic, strong) SVFTableViewDataSource *tableViewDataSource;
 
 @end
 
@@ -47,7 +50,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 
 - (void) createTableViewWithFrame:(CGRect) frame {
     _tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
-    _tableView.dataSource = self;
+    _tableView.dataSource = self.tableViewDataSource;
     _tableView.delegate = self;
     _tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
@@ -56,11 +59,8 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     }
     
     [self addSubview:_tableView];
-    [self configureTableView];
-}
-
-- (void) configureTableView {
-    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tableViewCellId];
+    [_tableView registerNib:[UINib nibWithNibName:SVFComboTableViewConstatnsTableViewCellXibName bundle:nil]
+     forCellReuseIdentifier:SVFComboTableViewConstantsTableViewID];
 }
 
 - (void) configureSourceData {
@@ -68,41 +68,12 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
     kTableViewContentViewCellClassString = NSStringFromClass(cell.contentView.class);
     cell = nil;
     _sectionsCvArray = [NSMutableArray new];
+    self.tableViewDataSource.sectionsCvArray = _sectionsCvArray;
     _contentOffsetPoint = CGPointZero;
     self.selectionType = SVFComboTableViewNonSelection;
 }
 
 
-#pragma mark - TableViewDataSource
-
-- (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
-    if (self.dataSource) {
-        return [self.dataSource numberOfSectionsForComboTableView:self];
-    } else {
-        return 0;
-    }
-}
-
-- (NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.dataSource) {
-        return [self.dataSource cTableView:self numberOfRowsInSection:section];
-    } else {
-        return 0;
-    }
-}
-
-- (UITableViewCell *) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:tableViewCellId forIndexPath:indexPath];
-    
-    if ([self.delegate respondsToSelector:@selector(cTableView:colorForTableViewCellForIndexPath:)]) {
-        SVFCTIndexPath * index = [SVFCTIndexPath indexPathForRow:indexPath.row column:0 inSection:indexPath.section];
-        UIColor * cellColor = [self.delegate cTableView:self colorForTableViewCellForIndexPath:index];
-        cell.backgroundColor = cellColor;
-    }
-    [self configureCollectionViewForTargetView:cell.contentView forSection:indexPath.section];
-    
-    return cell;
-}
 
 #pragma mark - TableViewDelegate
 
@@ -132,7 +103,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
         return nil;
     } else {
         UIView * headerView = [self.delegate cTableView:self viewForHeaderInSection:section];
-        [self configureCollectionViewForTargetView:headerView forSection:section];
+//        [self configureCollectionViewForTargetView:headerView forSection:section];
         return headerView;
     }
 }
@@ -156,61 +127,6 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 
 #pragma mark - Configure
 
-- (void) configureCollectionViewForTargetView:(UIView *) targetView forSection:(NSInteger) section {
-    CGRect frameForCV = CGRectMake(0, 0, targetView.frame.size.width, targetView.frame.size.height);
-    UICollectionView * cv = [self configureCollectionViewWithFrame:frameForCV];
-    
-    NSMutableArray * cvSectionArray = nil;
-    if (section < _sectionsCvArray.count) {
-        cvSectionArray = [_sectionsCvArray[section] mutableCopy];
-    } else {
-        cvSectionArray = [NSMutableArray new];
-    }
-    
-    
-    for (UIView * item in targetView.subviews) {
-        if ([item isKindOfClass:[UICollectionView class]]) {
-            [item removeFromSuperview];
-            if ([cvSectionArray containsObject:item]) {
-                [cvSectionArray removeObject:item];
-            }
-        }
-    }
-    
-    [cvSectionArray addObject:cv];
-    if (_sectionsCvArray.count == section) {
-        [_sectionsCvArray insertObject:cvSectionArray atIndex:section];
-    } else {
-        [_sectionsCvArray replaceObjectAtIndex:section withObject:cvSectionArray];
-    }
-    //
-    [targetView addSubview:cv];
-}
-
-- (UICollectionView *) configureCollectionViewWithFrame:(CGRect) frame {
-    UICollectionViewFlowLayout * layout = [self configureCollectionViewFlowLayoutWithFrame:frame];
-    
-    UICollectionView * collectionView = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:layout];
-    collectionView.backgroundColor = [UIColor clearColor];
-    [collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:collectionViewCellId];
-    collectionView.delegate = self;
-    collectionView.dataSource = self;
-    collectionView.showsHorizontalScrollIndicator = NO;
-    collectionView.decelerationRate = UIScrollViewDecelerationRateFast;
-    [collectionView setContentOffset:_contentOffsetPoint animated:YES];
-    collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
-    return collectionView;
-}
-
-- (UICollectionViewFlowLayout *) configureCollectionViewFlowLayoutWithFrame:(CGRect) frame {
-    UICollectionViewFlowLayout * cvfl = [[UICollectionViewFlowLayout alloc] init];
-    [cvfl setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-    [cvfl setItemSize:CGSizeMake(frame.size.width, frame.size.height)];
-    cvfl.minimumInteritemSpacing = 0.f;
-    cvfl.minimumLineSpacing = 0.f;
-    return cvfl;
-}
 
 #pragma mark - ColletionViewDataSource
 
@@ -223,7 +139,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 }
 
 - (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionViewCellId forIndexPath:indexPath];
+    UICollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:SVFComboTableViewConstantsCollectionViewID forIndexPath:indexPath];
     
     
     
@@ -383,8 +299,8 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
         if ([scrollView isEqual:_firstScrolled]) {
             for (UICollectionView * item in selectedSection) {
                 if (![item isEqual:_firstScrolled]) {
-                    _contentOffsetPoint = scrollView.contentOffset;
-                    [item setContentOffset:_contentOffsetPoint animated:NO];
+                    self.contentOffsetPoint = scrollView.contentOffset;
+                    [item setContentOffset:self.contentOffsetPoint animated:NO];
                 }
             }
             _firstScrolled = nil;
@@ -419,7 +335,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
         for (UICollectionView * item in arrayWithCV) {
             if (![item isEqual:scrollView]) {
                 [item setContentOffset:scrollView.contentOffset animated:NO];
-                _contentOffsetPoint = scrollView.contentOffset;
+                self.contentOffsetPoint = scrollView.contentOffset;
             }
         }
     }
@@ -428,6 +344,24 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 
 #pragma mark - Properties
 
+- (SVFTableViewDataSource *) tableViewDataSource {
+    if (_tableViewDataSource) {
+        return _tableViewDataSource;
+    }
+    _tableViewDataSource = [SVFTableViewDataSource new];
+    _tableViewDataSource.cTableView = self;
+    return _tableViewDataSource;
+}
+
+- (void) setDataSource:(id<SVFComboTableViewDataSource>)dataSource {
+    _dataSource = dataSource;
+    self.tableViewDataSource.dataSource = dataSource;
+}
+
+- (void) setContentOffsetPoint:(CGPoint)contentOffsetPoint {
+    _contentOffsetPoint = contentOffsetPoint;
+    self.tableViewDataSource.contentOffsetPoint = contentOffsetPoint;
+}
 
 #pragma mark - Other
 
