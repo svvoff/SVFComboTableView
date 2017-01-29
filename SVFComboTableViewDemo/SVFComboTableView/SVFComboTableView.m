@@ -124,8 +124,6 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
         h = .01f;
         return h;
     }
-    //UIView * headerView = [___tableView headerViewForSection:section];
-    //[self configureCollectionViewForTargetView:headerView forSection:section];
     return h;
 }
 
@@ -243,13 +241,12 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
         }
     }
     
-    if ([NSStringFromClass(collectionView.superview.class) isEqualToString:kTableViewContentViewCellClassString]/* [collectionView.superview isKindOfClass:_tableViewContentViewCellClass]*/) {
+    if ([NSStringFromClass(collectionView.superview.class) isEqualToString:kTableViewContentViewCellClassString]) {
         [self clearSubviewsForView:cell forClass:[UIView class]];
         
         if (index) {
             SVFCTIndexPath * ctIndexPath = [SVFCTIndexPath indexPathForRow:index.row column:indexPath.row inSection:index.section];
             UIView * viewInCell = [self.dataSource cTableView:self viewForItemAtIndexPath:ctIndexPath withCellFrame:cellFrame];
-            //[self clearSubviewsForView:cell forClass:[viewInCell class]];
             if (viewInCell) {
                 [cell addSubview:viewInCell];
             }
@@ -266,7 +263,7 @@ static NSString * kTableViewContentViewCellClassString = nil; //collection view 
 
 - (NSIndexPath *) indexPathForTableViewCell:(UIView *) tableCellContentView {
     if ([tableCellContentView.superview isKindOfClass:[UITableViewCell class]]) {
-        NSIndexPath * index = [_tableView indexPathForCell: (UITableViewCell *)tableCellContentView.superview];
+        NSIndexPath * index = [_tableView indexPathForRowAtPoint:tableCellContentView.superview.center];
         return index;
     } else {
         return nil;

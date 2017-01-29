@@ -63,10 +63,6 @@ typedef NS_ENUM(NSUInteger, SVFComboTableViewSelectionType) {
 - (void) cTableView:(SVFComboTableView *) cTabelView didSelectHeaderItemForColumn:(NSInteger) column inSection:(NSInteger) section;
 - (void) cTableView:(SVFComboTableView *) cTabelView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRow:(NSInteger) row inSection:(NSInteger) section;
 - (BOOL) cTableView:(SVFComboTableView *) cTableView canEditRow:(NSInteger) row inSection:(NSInteger) section;
-
-/*!
-    indexPath.colum always equal 0
-*/
 - (UIColor *) cTableView:(SVFComboTableView *) cTabelView colorForTableViewCellForIndexPath:(SVFCTIndexPath *) indexPath;
 
 @end

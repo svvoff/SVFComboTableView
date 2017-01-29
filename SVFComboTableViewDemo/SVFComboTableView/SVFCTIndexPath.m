@@ -12,11 +12,10 @@
 
 + (SVFCTIndexPath *) indexPathForRow:(NSInteger) row column:(NSInteger) column inSection:(NSInteger) section {
     SVFCTIndexPath * returningIP = [[SVFCTIndexPath alloc] init];
-    returningIP -> _section = section;
-    returningIP -> _row = row;
-    returningIP -> _column = column;
+    returningIP->_section = section;
+    returningIP->_row = row;
+    returningIP->_column = column;
     return returningIP;
-    
 }
 
 @end
